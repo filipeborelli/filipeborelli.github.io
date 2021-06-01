@@ -185,13 +185,12 @@ $(function () {
         if( number != '' && msg != ''){
             $.post({
                 method: 'POST',
-                url: `https://whatsapp.contrateumdev.com.br/sendText`,
+                url: `https://apiwhatsapp-site.herokuapp.com/api/sendmessage/?session=${token}`,
                 contentType:"application/json; charset=utf-8",
                 dataType:"json",
                 data: JSON.stringify({
-                    sessionName: `session${token}`,
-                    number: number,
-                    text: msg
+                    phone: number,
+                    message: msg
                 }),
                 beforeSend: () => {
                     $('#send').html("Enviando...")
@@ -203,9 +202,9 @@ $(function () {
   
                         Swal.fire({
                             title: 'Enviada',
-                            text: 'Sua mensagem foi enviada com sucesso',
+                            text: 'Mensagem enviada!',
                             icon: 'success',
-                            confirmButtonText: 'Nice!'
+                            confirmButtonText: 'Confirmar!'
                         })
   
                         $('#number').val("")
@@ -237,128 +236,29 @@ $(function () {
         
     });
   
-    $("#sendMail").click(function () {
-        let email = $("#email").val();
-  
-        if(email != ''){
-            $.post({
-                method: 'POST',
-                url: `/api/email/subscribe`,
-                contentType:"application/json; charset=utf-8",
-                dataType:"json",
-                data: JSON.stringify({
-                    email: email
-                }),
-                success: function(resultado, status, xhr) {
-                    if (status == 'success') {
-                        
-                        Swal.fire({
-                            title: 'Good!',
-                            text: resultado?.message,
-                            icon: 'success',
-                            confirmButtonText: 'Ok'
-                        })
-  
-                        $('#email').val("")
-  
-                    }else{
-  
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'E-mail não cadastrado.',
-                            icon: 'error',
-                            confirmButtonText: 'Tentar novamente'
-                        })
-                        console.log(resultado)
-                    }
-                }
-            })
-        }else{
-  
-            Swal.fire({
-                title: 'Error!',
-                text: 'Preencha com um e-mail válido para continuar',
-                icon: 'error',
-                confirmButtonText: 'Tentar novamente'
-            })
-  
-        }
-        
-    });
-
-    getStatusServer();
+   
   
   })
 
-  function getStatusServer(){
 
+  
+  async function startSession(){
+  
     $.post({
         method: 'POST',
-        url: `https://api.contrateumdev.com.br/status`,
-        contentType:"application/json; charset=utf-8",
-        dataType:"json",
-        success: function(resultado, status, xhr) {
-            if (resultado) {
-
-                tudoOk = true;
-                resultado?.monitors.forEach(function(server){
-                    tudoOk = parseInt(server?.status) == 2;
-                    switch (parseInt(server?.status)) {
-                        case 0:
-                            html = `<div class="alert alert-secondary" role="alert" data-aos="fade-up">
-                                O serviço <a href="${server?.url}" target="_blank" class="alert-link">${server?.friendly_name}</a>. está pausado para manutenção atualmente.
-                            </div>`;
-                            break;
-                        case 1:
-                            html = `<div class="alert alert-info" role="alert" data-aos="fade-up">
-                                O serviço <a href="${server?.url}" target="_blank"  class="alert-link">${server?.friendly_name}</a>. ainda não foi verificado.
-                            </div>`;
-                            break;
-                        case 2:
-                            html = `<div class="alert alert-success" role="alert" data-aos="fade-up">
-                                O serviço <a href="${server?.url}" target="_blank"  class="alert-link">${server?.friendly_name}</a>. está funcionando normalmente.
-                            </div>`;
-                            break;
-                        case 8:
-                            html = `<div class="alert alert-warning" role="alert" data-aos="fade-up">
-                                O serviço <a href="${server?.url}" target="_blank"  class="alert-link">${server?.friendly_name}</a>. aparentemente está com problemas.
-                            </div>`;
-                            break;
-                        case 9:
-                            html = `<div class="alert alert-danger" role="alert" data-aos="fade-up">
-                                O serviço <a href="${server?.url}" target="_blank"  class="alert-link">${server?.friendly_name}</a>. está offline, já estamos verificando.
-                            </div>`;
-                            break;
-                        default:
-                            break;
-                    }
-                    $(".list_servers").append(html)
-                })
-
-                tudoOk == true ? $(".status_servers").addClass('text-success').html('Todos os sistemas operacionais')
-                       : $(".status_servers").addClass('text-danger').html('Alguns sistemas estão desligados')
-
-            }
-        }
-    })
-  }
-  
-  function startSession(){
-  
-    $.post({
-        method: 'GET',
-        url: `https://whatsapp.contrateumdev.com.br/start?sessionName=session${token}`,
+        url: `https://apiwhatsapp-site.herokuapp.com/api/start/?session=${token}`,
         success: function(resultado, status, xhr) {
             if (resultado) {
   
                 if( (resultado.message == "STARTING") || (resultado.message == "QRCODE")){
                     $(".img-whats-block").css('display', 'block');
                     $(".whats-block").css('display', 'none');
-  
+                    
+                    setTimeout(async function(){ 
                     $.post({
                         method: 'GET',
-                        url: `https://whatsapp.contrateumdev.com.br/qrcode?sessionName=session${token}`,
-                        success: function(resultado, status, xhr) {
+                        url: `https://apiwhatsapp-site.herokuapp.com/api/qrcode/?session=${token}`,
+                        success: async function(resultado, status, xhr) {
                             if (resultado) {
   
                                 $(".img-whats-block").css('display', 'block');
@@ -368,9 +268,21 @@ $(function () {
                                 if(resultado?.qrcode){
                                     $(".img-whats-block").css('display', 'block');
                                     $(".whats-block").css('display', 'none');
-  
-                                    console.log(resultado?.qrcode)
-                                    $(".img-whats-block").html(`<img src="${resultado?.qrcode}" style="margin: 20px;width:250px;"> <br /> <small>Escaneie o código e aguarde ...</small>`)
+
+                                    await fetch(`https://api.qrserver.com/v1/create-qr-code/?data=${resultado?.qrcode}&size=300x300`, {
+                                        "method": "GET",
+                                        "headers": {}
+                                      })
+                                      .then(response => {
+                                      })
+                                      .then((result) => {
+                                        $(".img-whats-block").html(`<img src="https://api.qrserver.com/v1/create-qr-code/?data=${resultado?.qrcode}&size=300x300" style="margin: 20px;width:400px;height:400px"> <br /> <small>Escaneie o código e aguarde ...</small>`)
+                                      })
+                                      .catch(err => {
+                                        console.error(err);
+                                      });
+
+                                
                                 }
   
                             }else{
@@ -378,6 +290,7 @@ $(function () {
                             }
                         }
                     })
+                }, 500);
                 }
             }else{
                 console.log(resultado)
@@ -391,7 +304,7 @@ $(function () {
   
     $.post({
         method: 'GET',
-        url: `https://whatsapp.contrateumdev.com.br/status?sessionName=session${token}`,
+        url: `https://apiwhatsapp-site.herokuapp.com/api/checkstatus/?session=${token}`,
         beforeSend: () => {
             $(".img-whats-block").css('display', 'block');
             $(".whats-block").css('display', 'none');
@@ -414,10 +327,6 @@ $(function () {
   
                         break;
                 
-                    case 'OPENING':
-                        closeSession()
-                    
-                        break;
   
                     case 'NOT_FOUND':
                         startSession()
@@ -452,8 +361,7 @@ $(function () {
                     localStorage.removeItem('token');
                     window.location.reload()
                     $("#modalWhats").modal("hide")
-                    closeSession()
-  
+           
                 }
     
             });
@@ -463,21 +371,31 @@ $(function () {
   
   }
   
-  function getQrCode(){
+  async function getQrCode(){
   
     $.post({
         method: 'GET',
-        url: `https://whatsapp.contrateumdev.com.br/qrcode?sessionName=session${token}`,
+        url: `https://apiwhatsapp-site.herokuapp.com/api/qrcode/?session=${token}`,
         beforeSend: () => {
             $(".modal-footer").css('display','none');
         },
-        success: function(resultado, status, xhr) {
+        success: async function(resultado, status, xhr) {
             if (resultado) {
-  
                 if(resultado?.qrcode){
                     $(".img-whats-block").css('display', 'block');
                     $(".whats-block").css('display', 'none');
-                    $(".img-whats-block").html(`<img src="${resultado?.qrcode}" style="margin: 20px;width:250px;"> <br /> <button type="button" id="clear" class="btn btn-sm btn-secondary" onclick="localStorage.removeItem('token');window.location.reload();"> Limpar dados </button> <br /> <small> Leia o QR-Code com o  seu WhatsApp e aguarde.  <br />Conheça as políticas do <a href="https://faq.whatsapp.com/" target="_blank"> WhatsApp Inc</a> </small>`)
+                    await fetch(`https://api.qrserver.com/v1/create-qr-code/?data=${resultado?.qrcode}&size=300x300`, {
+                        "method": "GET",
+                        "headers": {}
+                      })
+                      .then(response => {
+                      })
+                      .then((result) => {
+                        $(".img-whats-block").html(`<img src="https://api.qrserver.com/v1/create-qr-code/?data=${resultado?.qrcode}&size=300x300" style="margin: 20px;width:400px;height:400px"> <br /> <small>Escaneie o código e aguarde ...</small>`)
+                      })
+                      .catch(err => {
+                        console.error(err);
+                      });
                 }
   
             }else{
@@ -491,20 +409,7 @@ $(function () {
   
   }
   
-  function closeSession(){
-    $.post({
-        method: 'GET',
-        url: `https://whatsapp.contrateumdev.com.br/close?sessionName=session${token}`,
-        success: function(resultado, status, xhr) {
-            if (resultado) {
-                console.log(resultado)
-            }
-        },
-        error: function(data) {
-            console.log(data.error)
-        }
-    })
-  }
+ 
   /* 
   grecaptcha.ready(function() {
     grecaptcha.execute('6LfPv58aAAAAAOxggKWnnws03NshyMazd_G9bi3o', {action:'validate_captcha'})

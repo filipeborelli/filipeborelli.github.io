@@ -13,6 +13,7 @@
     <title> Borelli - Soluções para WhatsApp </title>
     <meta charset="utf-8">
     <script data-ad-client="ca-pub-6245292242729302" async src="js/js-adsbygoogle.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="dns-prefetch" href="https//fonts.googleapis.com">
@@ -66,7 +67,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 hero-img" data-aos="zoom-out" data-aos-delay="200">
-                    <img src="images/img-whatsapp.svg" class="img-fluid" title="API Gr&aacute;tis" alt="API Gr&aacute;tis">
+                    <img src="images/img-whatsapp.svg" class="img-fluid">
                 </div>
             </div>
         </div>
@@ -79,7 +80,7 @@
             <div class="row">
                 <div class="col-lg-4 mt-4 mt-lg-0">
                     <div class="box" data-aos="fade-up" data-aos-delay="400">
-                        <img src="images/values-3.png" class="img-fluid" title="Filipe" alt="Filipe Borelli">
+                        <img src="images/values-3.png" class="img-fluid">
                         <h3>Disparo de mensagens</h3>
                         <p>Envio de mensagens e campanhas em massa.
                         </p>
@@ -88,7 +89,7 @@
                 </div>
                 <div class="col-lg-4 mt-4 mt-lg-0">
                     <div class="box" data-aos="fade-up" data-aos-delay="600">
-                        <img src="images/values-2.png" class="img-fluid" title="API Gr&aacute;tis" alt="API Gr&aacute;tis">
+                        <img src="images/values-2.png" class="img-fluid">
                         <h3>Chat Bot</h3>
                         <p>Bots com Inteligência Artificial para melhor atender seus clientes.</p>
                         <a href="#pricing" target="_self"> Come&ccedil;ar agora </a>
@@ -96,7 +97,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="box" data-aos="fade-up" data-aos-delay="200">
-                        <img src="images/values-1.png" class="img-fluid" title="API Gr&aacute;tis" alt="API Gr&aacute;tis">
+                        <img src="images/values-1.png" class="img-fluid">
                         <h3>API para delivery</h3>
                         <p>API com integração a métodos de pagamentos, confirmações de pedidos e muito mais...</p>
                         <a href="documentacoes.html" target="_self"> Saiba mais </a>
@@ -105,10 +106,67 @@
             </div>
         </div>
     </section>
+    <section id="about" class="about">
+        <div class="container" data-aos="fade-up">
+            <div class="row gx-0">
+                <div class="col-lg-6 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
+                    <img src="images/b2.png" class="img-fluid">
+                </div>
+                <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="content">
+                        <h2>
+                            Teste agora nossa API do WhatsApp
+                        </h2>
+                        <p>
+                            Realize um teste na nossa API, envie mensagens agora para quem deseja.
+                        </p>
+                        <div class="text-center text-lg-start">
+
+                            <a href="#" id="testWhatsApp" class="btn-read-more align-items-center justify-content-center align-self-center d-none d-sm-inline-flex" style="background: #009785">
+                                <span>Testar agora</span>
+                                <i class="fab fa-whatsapp"></i> &nbsp;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
     <footer id="footer" class="footer">
 
 
     </footer>
+    <div class="modal fade" id="modalWhats" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalWhatsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalWhatsLabel">Enviar WhatsApp <small style="font-size:10px;"> Beta </small></h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row whats-block">
+                        <div class="col-lg-12">
+                            <label for="number">DDD + N&uacute;mero</label>
+                            <input type="tel" id="number" class="form-control" aria-label="number" placeholder="N&uacute;mero do WhatsApp">
+                        </div>
+                        <div class="col-lg-12">
+                            <label for="msg">Mensagem</label>
+                            <textarea id="msg" class="form-control" aria-label="With textarea" placeholder="Digite sua mensagem" maxlength="300"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                    <input type="hidden" name="action" value="validate_captcha">
+                    <div class="row img-whats-block" style="text-align:center;display: none;"></div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" id="clear" class="btn btn-secondary" onclick="localStorage.removeItem('token');window.location.reload();" style="width: 30%">Limpar dados e fechar</button>
+                    <button type="button" id="send" class="btn btn-success">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <script data-cfasync="false" src="js/cloudflare-static-email-decode.min.js"></script>
     <script src="js/3.6.0-jquery.min.js"></script>
